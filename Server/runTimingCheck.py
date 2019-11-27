@@ -14,8 +14,7 @@ def runTimTask():
 
 @manager.command
 def main():
-  # runTimTask()
-  print("run time task")
+  runTimTask()
 
 if __name__ == '__main__':
     manager.run()
