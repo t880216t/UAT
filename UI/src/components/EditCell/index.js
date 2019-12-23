@@ -212,6 +212,9 @@ export default class EditCell extends Component {
   };
 
   queryAddStepIndexDesc = (stepId, stepIndex, indexType, linkId, base64Image) => {
+    if (stepId === 'empty') {
+      return
+    }
     const { dispatch } = this.props;
     dispatch({
       type: 'caseInfo/queryAddStepIndexDesc',
