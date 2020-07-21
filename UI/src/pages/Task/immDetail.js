@@ -296,7 +296,7 @@ export default class DetailPage extends PureComponent {
               })(
                 <Radio.Group>
                   <Radio value={1}>正式版</Radio>
-                  <Radio value={2}>测试版</Radio>
+                  <Radio value={2} disabled>测试版</Radio>
                 </Radio.Group>,
               )}
             </FormItem>

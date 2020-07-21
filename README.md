@@ -52,8 +52,9 @@ pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
 ```
 
 ###  导入webdriver
-https://github.com/mozilla/geckodriver/releases/
-http://chromedriver.storage.googleapis.com/index.html
+[geckodriver](https://github.com/mozilla/geckodriver/releases/)
+
+[chromedriver](http://chromedriver.storage.googleapis.com/index.html)
 下载后放入虚拟环境venv/bin中
 
 ###  启动后端服务
