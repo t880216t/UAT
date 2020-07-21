@@ -114,30 +114,30 @@ export default {
       routes: [
         {
           path: '/',
-          name: 'home',
+          name: '首页',
           icon: 'area-chart',
           component: './Home/home',
         },
         {
           path: '/case',
-          name: 'case',
+          name: '用例管理',
           icon: 'bank',
           routes: [
             {
               path: '/case/ui',
-              name: 'ui',
+              name: 'WEB UI 用例',
               component: './Case/index',
             },
           ],
         },
         {
           path: '/task',
-          name: 'task',
+          name: '任务管理',
           icon: 'apartment',
           routes: [
             {
               path: '/task/ui/immediate',
-              name: 'immediate',
+              name: '即时任务',
               hideChildrenInMenu: true,
               routes: [
                 {
@@ -146,28 +146,28 @@ export default {
                 },
                 {
                   path: '/task/ui/immediate/list',
-                  name: 'list',
+                  name: '任务列表',
                   component: './Task/immediate',
                 },
                 {
                   path: '/task/ui/immediate/add',
-                  name: 'add',
+                  name: '新建任务',
                   component: './Task/add',
                 },
                 {
                   path: '/task/ui/immediate/report',
-                  name: 'report',
+                  name: '任务报告',
                   component: './Task/immReport',
                 },
                 {
                   path: '/task/ui/immediate/detail',
-                  name: 'detail',
+                  name: '任务详情',
                   component: './Task/immDetail',
                 },
               ],
             },{
               path: '/task/ui/timing',
-              name: 'timing',
+              name: '定时任务',
               hideChildrenInMenu: true,
               routes: [
                 {
@@ -176,22 +176,22 @@ export default {
                 },
                 {
                   path: '/task/ui/timing/list',
-                  name: 'list',
+                  name: '任务列表',
                   component: './Task/timing',
                 },
                 {
                   path: '/task/ui/timing/add',
-                  name: 'add',
+                  name: '新建任务',
                   component: './Task/timAdd',
                 },
                 {
                   path: '/task/ui/timing/report',
-                  name: 'report',
+                  name: '任务报告',
                   component: './Task/timReport',
                 },
                 {
                   path: '/task/ui/timing/detail',
-                  name: 'detail',
+                  name: '任务详情',
                   component: './Task/timDetail',
                 },
               ],
@@ -200,41 +200,41 @@ export default {
         },
         {
           path: '/config',
-          name: 'config',
+          name: '配置管理',
           icon: 'code-sandbox',
           authority: ['admin', 'user'],
           routes: [
             {
               path: '/config/project',
-              name: 'project',
+              name: '项目配置',
               component: './Config/project',
             },
             {
               path: '/config/projectVersion',
-              name: 'projectVersion',
+              name: '版本管理',
               component: './Config/projectVersion',
             },
             {
               path: '/config/proxy',
-              name: 'proxy',
+              name: '代理配置',
               component: './Config/proxy',
             },
             {
               path: '/config/keywords',
-              name: 'keywords',
+              name: '关键词管理',
               component: './Config/keywords',
             },
           ],
         },
         {
           path: '/system',
-          name: 'system',
+          name: '系统管理',
           icon: 'setting',
           authority: ['admin'],
           routes: [
             {
               path: '/system/users',
-              name: 'users',
+              name: '用户管理',
               icon: 'user',
               component: './System/users',
             },
