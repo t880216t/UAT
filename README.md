@@ -15,3 +15,50 @@
 ├── UI                       # 前端代码
 └── README.md
 ```
+
+# 安装步骤
+
+###  下载项目代码
+```shell
+git clone https://github.com/t880216t/UAT.git
+```
+
+###  安装前端依赖
+```shell
+cd UAT/UI & cnpm i
+```
+
+###  启动前端开发服务
+```shell
+npm start
+```
+
+###  导入数据库文件
+UAT.sql
+
+###  创建服务端python虚拟环境
+```shell
+cd UAT/Server & python3 -m venv venv
+```
+
+###  启动虚拟环境安装服务端依赖
+```shell
+source venv/bin/activate
+pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
+```
+
+###  导入webdriver
+https://github.com/mozilla/geckodriver/releases/
+http://chromedriver.storage.googleapis.com/index.html
+下载后放入虚拟环境venv/bin中
+
+###  启动后端服务
+```shell
+python run.py
+```
+
+### 导入SeleniumLibrary库的默认关键词
+```shell
+cd UAT/Server/scripts
+python syncRFLib2DB.py
+```
