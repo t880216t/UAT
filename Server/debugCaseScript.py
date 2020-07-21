@@ -107,6 +107,9 @@ def getTaskInfo(taskId):
         test_cases.append(caseData)
     suiteConfig = CaseProjectSetting.query.filter_by(pid=suiteId).first()
     suitelibs = []
+    defaultLibs = CaseLibs.query.filter_by(lib_type=1).all()
+    for lib in defaultLibs:
+      suitelibs.append(lib.name)
     if suiteConfig:
       suiteLibDatas = CaseLibs.query.filter(db.and_(CaseLibs.id.in_(json.loads(suiteConfig.libs)))).all()
       for lib in suiteLibDatas:

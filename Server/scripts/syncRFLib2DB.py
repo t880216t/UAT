@@ -1,5 +1,5 @@
 #-*-coding:utf-8-*-
-from scripts.data import libdoc
+from data import libdoc
 import requests, time,json
 
 class syncRFLib2DB():

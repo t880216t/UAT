@@ -186,6 +186,9 @@ def getTaskInfo(taskId, taskRootPath):
         test_cases.append(caseData)
     suiteConfig = CaseProjectSetting.query.filter_by(pid=suiteId).first()
     suitelibs = []
+    defaultLibs = CaseLibs.query.filter_by(lib_type=1).all()
+    for lib in defaultLibs:
+      suitelibs.append(lib.name)
     if suiteConfig:
       suiteLibDatas = CaseLibs.query.filter(db.and_(CaseLibs.id.in_(json.loads(suiteConfig.libs)))).all()
       for lib in suiteLibDatas:
@@ -485,44 +488,27 @@ def setTaskStatus(taskId,status):
 @manager.option('-i','--task_id',dest='task_id',default='')
 def runScript(task_id):
   setTaskStatus(task_id, 2)
-  # try:
-  #   now = datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
-  #   taskRootPath = encrypt_name(now)
-  #   taskInfo = getTaskInfo(task_id,taskRootPath)
-  #   customKeywords, keywordRootlibs = getCustomKeywords(task_id)
-  #   projectDir = buildTaskProject(taskInfo,taskRootPath)
-  #   if taskInfo['host'] and taskInfo['valueType'] == 2:
-  #     buildHostFile(projectDir, taskInfo['host'])
-  #   buildCustomKeywordFile(projectDir,customKeywords, keywordRootlibs)
-  #   if taskInfo['valueType'] == 2:
-  #     dockerExcuteScript(projectDir,taskRootPath, taskInfo['host'])
-  #   else:
-  #     excuteScript(projectDir)
-  #   logs = alasyRootLog(taskInfo, projectDir, taskRootPath)
-  #   saveLogToDB(task_id,logs)
-  #   saveTimLogToDB(taskInfo,task_id,logs)
-  #   setTaskStatus(task_id, 3)
-  #   clear_project_file('taskFile/' + taskRootPath)
-  # except Exception as e:
-  #   print(e)
-  #   setTaskStatus(task_id, 4)
-  now = datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
-  taskRootPath = encrypt_name(now)
-  taskInfo = getTaskInfo(task_id, taskRootPath)
-  customKeywords, keywordRootlibs = getCustomKeywords(task_id)
-  projectDir = buildTaskProject(taskInfo, taskRootPath)
-  if taskInfo['host'] and taskInfo['valueType'] == 2:
-    buildHostFile(projectDir, taskInfo['host'])
-  buildCustomKeywordFile(projectDir, customKeywords, keywordRootlibs)
-  if taskInfo['valueType'] == 2:
-    dockerExcuteScript(projectDir, taskRootPath, taskInfo['host'])
-  else:
-    excuteScript(projectDir)
-  logs = alasyRootLog(taskInfo, projectDir, taskRootPath)
-  saveLogToDB(task_id, logs)
-  saveTimLogToDB(taskInfo, task_id, logs)
-  setTaskStatus(task_id, 3)
-  clear_project_file('taskFile/' + taskRootPath)
+  try:
+    now = datetime.now().strftime('%Y-%m-%d_%H_%M_%S')
+    taskRootPath = encrypt_name(now)
+    taskInfo = getTaskInfo(task_id,taskRootPath)
+    customKeywords, keywordRootlibs = getCustomKeywords(task_id)
+    projectDir = buildTaskProject(taskInfo,taskRootPath)
+    if taskInfo['host'] and taskInfo['valueType'] == 2:
+      buildHostFile(projectDir, taskInfo['host'])
+    buildCustomKeywordFile(projectDir,customKeywords, keywordRootlibs)
+    if taskInfo['valueType'] == 2:
+      dockerExcuteScript(projectDir,taskRootPath, taskInfo['host'])
+    else:
+      excuteScript(projectDir)
+    logs = alasyRootLog(taskInfo, projectDir, taskRootPath)
+    saveLogToDB(task_id,logs)
+    saveTimLogToDB(taskInfo,task_id,logs)
+    setTaskStatus(task_id, 3)
+    clear_project_file('taskFile/' + taskRootPath)
+  except Exception as e:
+    print(e)
+    setTaskStatus(task_id, 4)
 
 
 if __name__ == "__main__":
