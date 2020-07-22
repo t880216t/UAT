@@ -23,7 +23,7 @@ class Immediate extends PureComponent {
   }
 
   componentWillMount() {
-    const hostname = new URL(window.location.host);
+    const hostname = window.location.origin.split('//')[1];
     this.setState({ hostname: hostname });
     this.socket = io(`ws://${hostname}/wstask`);
     this.socket.on('connect', () => {
