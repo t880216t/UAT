@@ -252,7 +252,8 @@ def getHomeData():
 
 @task.route('/getHomeFailCase', methods=['GET'])
 def getHomeFailCase():
-  results = FailCaseLog.query.filter().limit(30).all()
+  results = FailCaseLog.query.filter().order_by(
+      db.desc(FailCaseLog.add_time)).limit(30).all()
   content = []
   if len(results) > 0:
     for result in results:
