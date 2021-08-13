@@ -115,10 +115,13 @@ def getTaskInfo(taskId, taskRootPath):
               else:
                 proxyData = app.root_path[:-3] + '/' + taskDir + '/ff_profile'
               proxySetting = ['${FF_PROFILE}=','Set Variable', proxyData]
-              if len(stepData) > 3:
-                stepData[3] = 'ff_profile_dir=${FF_PROFILE}'
-              else:
+              if len(stepData) >= 3:
+                stepData.append(
+                  'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0) Gecko/20100101 Firefox/68.0 Focus-Test-MIC\")')
                 stepData.append('ff_profile_dir=${FF_PROFILE}')
+              else:
+                stepData[3] = 'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0) Gecko/20100101 Firefox/68.0 Focus-Test-MIC\")'
+                stepData[4] = 'ff_profile_dir=${FF_PROFILE}'
               caseSteps.append({
                 'values': proxySetting,
                 'id': str(round(time.time()))
@@ -127,13 +130,16 @@ def getTaskInfo(taskId, taskRootPath):
             if proxyRow:
               proxyData = {'proxy': {'proxyType': 'MANUAL', 'httpProxy': proxyRow.path, 'sslProxy': proxyRow.path}}
               proxySetting = ['${desired capabilities}=', 'Evaluate', json.dumps(proxyData)]
-              if len(stepData) > 3:
-                stepData[3] = 'desired_capabilities=${desired capabilities}'
-              else:
+              if len(stepData) >= 3:
+                stepData.append('options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Focus-Test-MIC\")')
                 stepData.append('desired_capabilities=${desired capabilities}')
+              else:
+                stepData[3] = 'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Focus-Test-MIC\")'
+                stepData[4] = 'desired_capabilities=${desired capabilities}'
               caseSteps.append({
                 'values': proxySetting,
                 'id': str(round(time.time()))
+
               })
         if valueType == 2:
           stepData[2] = 'headlesschrome'
@@ -505,7 +511,7 @@ def runScript(task_id):
     saveLogToDB(task_id,logs)
     saveTimLogToDB(taskInfo,task_id,logs)
     setTaskStatus(task_id, 3)
-    clear_project_file('taskFile/' + taskRootPath)
+    # clear_project_file('taskFile/' + taskRootPath)
   except Exception as e:
     print(e)
     setTaskStatus(task_id, 4)

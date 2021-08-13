@@ -36,7 +36,7 @@ class TimScript():
     if runTime and status:
       print("UI定时任务开始：taskId-", self.taskId, "runTime -", runTime)
       schedule.every().day.at(str(runTime)).do(self.start_job, self.taskId)
-      schedule.every(10).seconds.do(self.stop_job, self.taskId)
+      schedule.every(3).seconds.do(self.stop_job, self.taskId)
     else:
       print("run UI timing task [%s] error" % self.taskId)
 

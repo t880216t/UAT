@@ -31,15 +31,19 @@ def get_connect(message):
   taskType = message['taskType']
   pageNum = message['pageNum']
   dataCount = Task.query.filter(db.and_(Task.task_type == taskType, )).count()
+  top_task = Task.query.filter(db.and_(Task.task_type == taskType, Task.name.like("%置顶%"))).order_by(
+    db.desc(Task.add_time)).all()
   if pageNum:
-    listData = Task.query.filter(db.and_(Task.task_type == taskType, )).order_by(db.desc(Task.add_time)).slice(
-      (pageNum - 1) * 20, pageNum * 20).all()
+    listData = Task.query.filter(db.and_(Task.task_type == taskType, Task.name.notlike("%置顶%"))).order_by(
+      db.desc(Task.add_time)).slice((pageNum - 1) * 20, pageNum * 20).all()
   else:
-    listData = Task.query.filter(db.and_(Task.task_type == taskType, )).order_by(db.desc(Task.add_time)).all()
+    listData = Task.query.filter(db.and_(Task.task_type == taskType, Task.name.notlike("%置顶%"))).order_by(
+      db.desc(Task.add_time)).all()
   content = {
     'taskContent': [],
     'total': dataCount,
   }
+  listData = top_task + listData
   for task in listData:
     row_data = users.query.filter(db.and_(users.id == task.user_id)).first()
     username = ""

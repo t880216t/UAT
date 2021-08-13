@@ -15,14 +15,19 @@ def taskList():
   taskType = request.json.get("taskType")
   pageNum = request.json.get("pageNum")
   dataCount = Task.query.filter(db.and_(Task.task_type == taskType, )).count()
+  top_task = Task.query.filter(db.and_(Task.task_type == taskType, Task.name.like("%置顶%"))).order_by(
+    db.desc(Task.add_time)).all()
   if pageNum:
-    listData = Task.query.filter(db.and_(Task.task_type == taskType, )).order_by(db.desc(Task.add_time)).slice((pageNum - 1) * 20, pageNum * 20).all()
+    listData = Task.query.filter(db.and_(Task.task_type == taskType, Task.name.notlike("%置顶%"))).order_by(
+      db.desc(Task.add_time)).slice((pageNum - 1) * 20, pageNum * 20).all()
   else:
-    listData = Task.query.filter(db.and_(Task.task_type == taskType, )).order_by(db.desc(Task.add_time)).all()
+    listData = Task.query.filter(db.and_(Task.task_type == taskType, Task.name.notlike("%置顶%"))).order_by(
+      db.desc(Task.add_time)).all()
   content = {
     'taskContent': [],
     'total': dataCount,
   }
+  listData = top_task + listData
   for task in listData:
     row_data = users.query.filter(db.and_(users.id == task.user_id)).first()
     username = ""
@@ -42,6 +47,23 @@ def taskList():
     })
 
   return make_response(jsonify({'code': 0, 'content': content, 'msg': u''}))
+
+@task.route('/copyTask', methods=['POST'])
+def copyTask():
+  id = request.json.get("id")
+  user_id = session.get('user_id')
+  try:
+    rowData = Task.query.filter(db.and_(Task.id == id)).first()
+    if rowData:
+      name = "copy_{}".format(rowData.name)
+      data = Task(name, rowData.task_type, 0, rowData.case_id, rowData.run_time, user_id, rowData.project_id, rowData.value_type, rowData.browser_type, rowData.proxy_type, rowData.version_id, rowData.host)
+      db.session.add(data)
+      db.session.commit()
+      return make_response(jsonify({'code': 0, 'content': {'taskid': data.id}, 'msg': u'复制成功'}))
+  except Exception as e:
+    print(e)
+  return make_response(jsonify({'code': 10002, 'content': None, 'msg': u'复制失败!'}))
+
 
 @task.route('/addTask', methods=['POST'])
 def addDebugTask():
