@@ -117,10 +117,10 @@ def getTaskInfo(taskId, taskRootPath):
               proxySetting = ['${FF_PROFILE}=','Set Variable', proxyData]
               if len(stepData) >= 3:
                 stepData.append(
-                  'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0) Gecko/20100101 Firefox/68.0 Focus-Test-MIC\")')
+                  'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0) Gecko/20100101 Firefox/68.0 \")')
                 stepData.append('ff_profile_dir=${FF_PROFILE}')
               else:
-                stepData[3] = 'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0) Gecko/20100101 Firefox/68.0 Focus-Test-MIC\")'
+                stepData[3] = 'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0) Gecko/20100101 Firefox/68.0 \")'
                 stepData[4] = 'ff_profile_dir=${FF_PROFILE}'
               caseSteps.append({
                 'values': proxySetting,
@@ -131,10 +131,10 @@ def getTaskInfo(taskId, taskRootPath):
               proxyData = {'proxy': {'proxyType': 'MANUAL', 'httpProxy': proxyRow.path, 'sslProxy': proxyRow.path}}
               proxySetting = ['${desired capabilities}=', 'Evaluate', json.dumps(proxyData)]
               if len(stepData) >= 3:
-                stepData.append('options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Focus-Test-MIC\")')
+                stepData.append('options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 \")')
                 stepData.append('desired_capabilities=${desired capabilities}')
               else:
-                stepData[3] = 'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Focus-Test-MIC\")'
+                stepData[3] = 'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 \")'
                 stepData[4] = 'desired_capabilities=${desired capabilities}'
               caseSteps.append({
                 'values': proxySetting,
