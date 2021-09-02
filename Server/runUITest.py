@@ -66,6 +66,8 @@ def getTaskInfo(taskId, taskRootPath):
   for caseId in caseIds:
     caseInfo = Tree.query.filter_by(id=caseId).first()
     caseDetailData = CaseInfo.query.filter_by(pid=caseId).first()
+    if not caseDetailData:
+      continue
     caseSteps = []
     if versionId:
       caseStepDatas = CaseStep.query.filter(
@@ -117,10 +119,10 @@ def getTaskInfo(taskId, taskRootPath):
               proxySetting = ['${FF_PROFILE}=','Set Variable', proxyData]
               if len(stepData) >= 3:
                 stepData.append(
-                  'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0) Gecko/20100101 Firefox/68.0 \")')
+                  'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0) Gecko/20100101 Firefox/68.0 Focus-Test-MIC\")')
                 stepData.append('ff_profile_dir=${FF_PROFILE}')
               else:
-                stepData[3] = 'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0) Gecko/20100101 Firefox/68.0 \")'
+                stepData[3] = 'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0) Gecko/20100101 Firefox/68.0 Focus-Test-MIC\")'
                 stepData[4] = 'ff_profile_dir=${FF_PROFILE}'
               caseSteps.append({
                 'values': proxySetting,
@@ -131,10 +133,10 @@ def getTaskInfo(taskId, taskRootPath):
               proxyData = {'proxy': {'proxyType': 'MANUAL', 'httpProxy': proxyRow.path, 'sslProxy': proxyRow.path}}
               proxySetting = ['${desired capabilities}=', 'Evaluate', json.dumps(proxyData)]
               if len(stepData) >= 3:
-                stepData.append('options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 \")')
+                stepData.append('options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Focus-Test-MIC\")')
                 stepData.append('desired_capabilities=${desired capabilities}')
               else:
-                stepData[3] = 'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 \")'
+                stepData[3] = 'options=add_argument(\"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36 Focus-Test-MIC\")'
                 stepData[4] = 'desired_capabilities=${desired capabilities}'
               caseSteps.append({
                 'values': proxySetting,
@@ -170,8 +172,18 @@ def getTaskInfo(taskId, taskRootPath):
         for caseStep in caseSteps:
           if releaseIsoStep.pid == caseStep['id']:
             caseSteps.remove(caseStep)
-    setUpData = caseDetailData.set_up if caseDetailData.set_up else '[]'
-    tearDownData = caseDetailData.tear_down if caseDetailData.tear_down else '[]'
+    setUpData = '[]'
+    tearDownData = '[]'
+    try:
+      if caseDetailData and caseDetailData.set_up:
+        setUpData = caseDetailData.set_up
+    except Exception as e:
+      print(str(e))
+    try:
+      if caseDetailData and caseDetailData.tear_down:
+        tearDownData = caseDetailData.tear_down
+    except Exception as e:
+      print(str(e))
     caseDatas.append({
       'case_name': caseInfo.name,
       'caseId': caseId,
@@ -200,7 +212,7 @@ def getTaskInfo(taskId, taskRootPath):
       for lib in suiteLibDatas:
         suitelibs.append(lib.name)
     test_suites.append({
-      'name': suiteData.name,
+      'name': suiteData.name.replace('/','_').replace('\\','_').replace(' ','_'),
       'suiteId': suiteId,
       'libs': suitelibs,
       'test_cases': test_cases,
@@ -294,31 +306,34 @@ def buildTaskProject(taskInfo,taskRootPath):
 
   # 创建测试集及所包含的用例
   for testSuite in taskInfo['test_suites']:
-    with open(projectDir + '/'+testSuite['name']+'.robot', 'w', encoding='utf-8') as suiteFile:
-      suiteFile.writelines('*** Settings ***\n')
-      suiteFile.writelines('Suite Setup    Set Selenium Implicit Wait    5\n')
-      suiteFile.writelines('Suite Teardown    close_all\n')
-      suiteFile.writelines('Resource    customKeyword.robot\n')
-      for lib in testSuite['libs']:
-        suiteFile.writelines('Library    {lib}\n'.format(lib=lib))
-      suiteFile.writelines('Variables    globalValues.py\n')
-      suiteFile.writelines('\n')
-      suiteFile.writelines('*** Test Cases ***\n')
-      # 用例信息
-      for case in testSuite['test_cases']:
-        suiteFile.writelines('{caseName}\n'.format(caseName=case['case_name']))
-        # 用例前置处理
-        if case['setUp']:
-          setUp = '    '.join(case['setUp'])
-          suiteFile.writelines('    [Setup]    {setUp}\n'.format(setUp=setUp))
-        for caseStep in case['case_steps']:
-          step = '    '.join(caseStep['values'])
-          suiteFile.writelines('    {step}\n'.format(step=step))
-        # 用例后置处理
-        if case['tearDown']:
-          tearDown = '    '.join(case['tearDown'])
-          suiteFile.writelines('    [Teardown]    {tearDown}\n'.format(tearDown=tearDown))
+    try:
+      with open(projectDir + '/'+testSuite['name']+'.robot', 'w', encoding='utf-8') as suiteFile:
+        suiteFile.writelines('*** Settings ***\n')
+        suiteFile.writelines('Suite Setup    Set Selenium Implicit Wait    5\n')
+        suiteFile.writelines('Suite Teardown    close_all\n')
+        suiteFile.writelines('Resource    customKeyword.robot\n')
+        for lib in testSuite['libs']:
+          suiteFile.writelines('Library    {lib}\n'.format(lib=lib))
+        suiteFile.writelines('Variables    globalValues.py\n')
         suiteFile.writelines('\n')
+        suiteFile.writelines('*** Test Cases ***\n')
+        # 用例信息
+        for case in testSuite['test_cases']:
+          suiteFile.writelines('{caseName}\n'.format(caseName=case['case_name']))
+          # 用例前置处理
+          if case['setUp']:
+            setUp = '    '.join(case['setUp'])
+            suiteFile.writelines('    [Setup]    {setUp}\n'.format(setUp=setUp))
+          for caseStep in case['case_steps']:
+            step = '    '.join(caseStep['values'])
+            suiteFile.writelines('    {step}\n'.format(step=step))
+          # 用例后置处理
+          if case['tearDown']:
+            tearDown = '    '.join(case['tearDown'])
+            suiteFile.writelines('    [Teardown]    {tearDown}\n'.format(tearDown=tearDown))
+          suiteFile.writelines('\n')
+    except:
+      print('error suite: ', testSuite)
   return projectDir
 
 def buildHostFile(projectDir, host):
@@ -511,7 +526,7 @@ def runScript(task_id):
     saveLogToDB(task_id,logs)
     saveTimLogToDB(taskInfo,task_id,logs)
     setTaskStatus(task_id, 3)
-    # clear_project_file('taskFile/' + taskRootPath)
+    clear_project_file('taskFile/' + taskRootPath)
   except Exception as e:
     print(e)
     setTaskStatus(task_id, 4)
