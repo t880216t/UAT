@@ -466,7 +466,7 @@ def alasyRootLog(taskInfo, projectDir, taskRootPath):
               taskLog['total'] = failCount + sucessCount
   for suite in taskInfo['test_suites']:
     for logSuite in taskLog['testSuites']:
-      if suite['name'] == logSuite['name']:
+      if suite['name'] == logSuite['name'].replace('/','_').replace('\\','_').replace(' ','_'):
         logSuite['id'] = suite['suiteId']
         for case in suite['test_cases']:
           for logCase in logSuite['testCase']:
