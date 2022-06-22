@@ -33,7 +33,7 @@ mkdocs==1.0.4
 mkdocs-material==4.4.0
 mkdocs-minify-plugin==0.2.1
 monotonic==1.5
-numpy==1.16.4
+numpy==1.22.0
 packaging==19.1
 pandas==0.25.0
 pathtools==0.1.2
