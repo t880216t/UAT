@@ -70,7 +70,9 @@ export default class Home extends PureComponent {
       type: 'home/queryHomeFailCase',
     }).then(() => {
       const { failCaseData } = this.props.home;
-      this.setState({ failCaseData });
+      if(failCaseData){
+        this.setState({ failCaseData });
+      }
     });
   };
 
